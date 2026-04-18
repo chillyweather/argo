@@ -76,13 +76,6 @@ struct SettingsView: View {
                     }
                 }
 
-                LabeledContent("Live Preview") {
-                    Toggle("", isOn: Binding(
-                        get: { appState.livePreviewEnabled },
-                        set: { appState.livePreviewEnabled = $0 }
-                    ))
-                }
-
                 HStack {
                     Button("Test Connection") {
                         Task { await testConnection() }

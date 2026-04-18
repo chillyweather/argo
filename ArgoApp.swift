@@ -1,21 +1,17 @@
 import SwiftUI
 
 @main
-struct SargentApp: App {
+struct ArgoApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var appState = AppState()
+    @State private var windowConfigured = false
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(appState)
                 .onAppear {
-                    guard let window = NSApp.mainWindow ?? NSApp.windows.first else { return }
-                    WindowHelper.startFloating(window)
-                    WindowHelper.configureWindow(window)
-                    if appState.alwaysOnTop {
-                        WindowHelper.setAlwaysOnTop(true, for: window)
-                    }
+                    configureWindowIfNeeded()
                 }
         }
         .defaultSize(width: 600, height: 500)
@@ -32,6 +28,18 @@ struct SargentApp: App {
                 EmptyView()
             }
         }
+    }
+
+    private func configureWindowIfNeeded() {
+        guard !windowConfigured else { return }
+        guard let window = NSApp.mainWindow ?? NSApp.windows.first(where: { $0.isVisible }) else { return }
+        WindowHelper.startFloating(window)
+        WindowHelper.configureWindow(window)
+        if appState.alwaysOnTop {
+            WindowHelper.setAlwaysOnTop(true, for: window)
+        }
+        WindowHelper.bringToFront(window)
+        windowConfigured = true
     }
 }
 

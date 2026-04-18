@@ -1,22 +1,22 @@
 import AppKit
 
 enum WindowHelper {
+    private static let floatingCollectionBehavior: NSWindow.CollectionBehavior = [
+        .canJoinAllSpaces,
+        .fullScreenAuxiliary,
+        .managed
+    ]
+
     static func setAlwaysOnTop(_ onTop: Bool, for window: NSWindow?) {
         guard let window else { return }
-        let level: NSWindow.Level = onTop ? .init(rawValue: 8) : .normal
-        window.level = level
-
-        var behavior: NSWindow.CollectionBehavior = .managed
-        if onTop {
-            behavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .managed]
-        }
-        window.collectionBehavior = behavior
+        window.level = onTop ? .statusBar : .floating
+        window.collectionBehavior = floatingCollectionBehavior
     }
 
     static func startFloating(_ window: NSWindow?) {
         guard let window else { return }
-        window.level = NSWindow.Level(rawValue: 8)
-        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .managed]
+        window.level = .floating
+        window.collectionBehavior = floatingCollectionBehavior
     }
 
     static func configureWindow(_ window: NSWindow?) {
@@ -27,6 +27,15 @@ enum WindowHelper {
         window.backgroundColor = .clear
         window.isOpaque = false
         window.hasShadow = true
+        window.hidesOnDeactivate = false
+        window.collectionBehavior = floatingCollectionBehavior
         window.delegate = WindowCloseDelegate.shared
+    }
+
+    static func bringToFront(_ window: NSWindow?) {
+        guard let window else { return }
+        NSApp.activate(ignoringOtherApps: true)
+        window.orderFrontRegardless()
+        window.makeKey()
     }
 }

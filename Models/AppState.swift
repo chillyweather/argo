@@ -16,9 +16,6 @@ final class AppState {
     var alwaysOnTop: Bool {
         didSet { persist() }
     }
-    var livePreviewEnabled: Bool {
-        didSet { persist() }
-    }
     var opacity: Double {
         didSet { persist() }
     }
@@ -46,7 +43,6 @@ final class AppState {
         self.sbUrl = defaults.string(forKey: "sbUrl") ?? ""
         self.sbToken = defaults.string(forKey: "sbToken") ?? ""
         self.alwaysOnTop = defaults.object(forKey: "alwaysOnTop") as? Bool ?? false
-        self.livePreviewEnabled = defaults.object(forKey: "livePreviewEnabled") as? Bool ?? true
         self.opacity = defaults.object(forKey: "opacity") as? Double ?? 1.0
         self.fontSize = defaults.object(forKey: "fontSize") as? Double ?? 14
         self.fontFamily = defaults.string(forKey: "fontFamily") ?? "System"
@@ -111,7 +107,6 @@ final class AppState {
         defaults.set(sbUrl, forKey: "sbUrl")
         defaults.set(sbToken, forKey: "sbToken")
         defaults.set(alwaysOnTop, forKey: "alwaysOnTop")
-        defaults.set(livePreviewEnabled, forKey: "livePreviewEnabled")
         defaults.set(opacity, forKey: "opacity")
         defaults.set(fontSize, forKey: "fontSize")
         defaults.set(fontFamily, forKey: "fontFamily")
