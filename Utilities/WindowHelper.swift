@@ -1,6 +1,8 @@
 import AppKit
 
 enum WindowHelper {
+    private static var restoreAlwaysOnTopAfterFullScreen = false
+
     private static let floatingCollectionBehavior: NSWindow.CollectionBehavior = [
         .canJoinAllApplications,
         .fullScreenAuxiliary,
@@ -27,6 +29,25 @@ enum WindowHelper {
         window.collectionBehavior = floatingCollectionBehavior
     }
 
+    @discardableResult
+    static func toggleFullScreen(_ window: NSWindow?, alwaysOnTop: Bool) -> Bool {
+        guard let window else { return false }
+
+        if window.styleMask.contains(.fullScreen) {
+            window.toggleFullScreen(nil)
+            return false
+        }
+
+        restoreAlwaysOnTopAfterFullScreen = alwaysOnTop
+        prepareForFullScreen(window)
+        window.toggleFullScreen(nil)
+        return true
+    }
+
+    static func restoreAfterFullScreen(_ window: NSWindow?) {
+        setAlwaysOnTop(restoreAlwaysOnTopAfterFullScreen, for: window)
+    }
+
     static func configureWindow(_ window: NSWindow?) {
         guard let window else { return }
         window.titlebarAppearsTransparent = true
@@ -45,5 +66,12 @@ enum WindowHelper {
         NSApp.activate(ignoringOtherApps: true)
         window.orderFrontRegardless()
         window.makeKey()
+    }
+
+    private static func prepareForFullScreen(_ window: NSWindow) {
+        window.level = .normal
+        window.collectionBehavior = [.fullScreenPrimary, .managed]
+        window.styleMask.insert(.resizable)
+        window.standardWindowButton(.zoomButton)?.isEnabled = true
     }
 }

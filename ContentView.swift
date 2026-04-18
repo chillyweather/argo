@@ -11,10 +11,15 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             TopBar()
-            if appState.isPreviewingMarkdown {
-                MarkdownPreviewView()
-            } else {
-                EditorView()
+            GeometryReader { proxy in
+                Group {
+                    if appState.isPreviewingMarkdown {
+                        MarkdownPreviewView()
+                    } else {
+                        EditorView()
+                    }
+                }
+                .padding(.horizontal, appState.isFullScreenLayout ? proxy.size.width * 0.2 : 0)
             }
         }
         .frame(minWidth: 400, minHeight: 300)

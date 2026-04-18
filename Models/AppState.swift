@@ -7,6 +7,7 @@ final class AppState {
     var todoContent: String = ""
     var isSaving: Bool = false
     var isPreviewingMarkdown: Bool = false
+    var isFullScreenLayout: Bool = false
 
     var sbUrl: String {
         didSet { persist() }

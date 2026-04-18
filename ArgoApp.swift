@@ -13,16 +13,27 @@ struct ArgoApp: App {
                 .onAppear {
                     configureWindowIfNeeded()
                 }
+                .onReceive(NotificationCenter.default.publisher(for: .argoDidExitFullScreen)) { _ in
+                    appState.isFullScreenLayout = false
+                }
         }
         .defaultSize(width: 600, height: 500)
         .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Window") {
                     NSApp.activate(ignoringOtherApps: true)
                 }
                 .keyboardShortcut("n")
+            }
+            CommandGroup(after: .sidebar) {
+                Button("Toggle Full Screen") {
+                    appState.isFullScreenLayout = WindowHelper.toggleFullScreen(
+                        NSApp.mainWindow ?? NSApp.keyWindow,
+                        alwaysOnTop: appState.alwaysOnTop
+                    )
+                }
+                .keyboardShortcut("f", modifiers: .command)
             }
             CommandGroup(replacing: .textFormatting) {
                 EmptyView()
@@ -50,4 +61,13 @@ final class WindowCloseDelegate: NSObject, NSWindowDelegate {
         sender.orderOut(sender)
         return false
     }
+
+    func windowDidExitFullScreen(_ notification: Notification) {
+        WindowHelper.restoreAfterFullScreen(notification.object as? NSWindow)
+        NotificationCenter.default.post(name: .argoDidExitFullScreen, object: nil)
+    }
+}
+
+extension Notification.Name {
+    static let argoDidExitFullScreen = Notification.Name("argoDidExitFullScreen")
 }
