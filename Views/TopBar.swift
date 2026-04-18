@@ -29,18 +29,24 @@ struct TopBar: View {
                 .help("Open SilverBullet")
             }
 
+            Button {
+                appState.isPreviewingMarkdown.toggle()
+            } label: {
+                Image(systemName: appState.isPreviewingMarkdown ? "pencil" : "eye")
+                    .foregroundStyle(appState.isPreviewingMarkdown ? theme.accent : theme.textMuted)
+            }
+            .buttonStyle(.plain)
+            .help(appState.isPreviewingMarkdown ? "Show Editor" : "Show Markdown Preview")
+            .keyboardShortcut("e", modifiers: .command)
+
             Spacer()
 
             if appState.mode == .scratchpad {
                 Button {
                     Task { await saveScratchpad() }
                 } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("Save")
-                            .font(.caption)
-                    }
-                    .foregroundStyle(theme.text)
+                    Image(systemName: "externaldrive")
+                        .foregroundStyle(theme.textMuted)
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.return, modifiers: .command)
@@ -57,11 +63,6 @@ struct TopBar: View {
                     .fill(statusColor)
                     .frame(width: 6, height: 6)
             }
-
-            Text(appState.status.text)
-                .font(.caption2)
-                .foregroundStyle(theme.textMuted)
-                .lineLimit(1)
 
             Button {
                 appState.alwaysOnTop.toggle()
@@ -87,7 +88,6 @@ struct TopBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(theme.bg.opacity(appState.opacity))
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }

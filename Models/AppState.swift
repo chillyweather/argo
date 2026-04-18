@@ -6,6 +6,7 @@ final class AppState {
     var errorMessage: String?
     var todoContent: String = ""
     var isSaving: Bool = false
+    var isPreviewingMarkdown: Bool = false
 
     var sbUrl: String {
         didSet { persist() }
@@ -85,8 +86,13 @@ final class AppState {
 
     func saveTodoDebounced(_ content: String) {
         todoContent = content
+        saveCurrentTodoDebounced()
+    }
+
+    func saveCurrentTodoDebounced() {
         todoDebounceTask?.cancel()
         guard !sbUrl.isEmpty, !sbToken.isEmpty else { return }
+        let content = todoContent
         todoDebounceTask = Task {
             try? await Task.sleep(for: .seconds(1.5))
             guard !Task.isCancelled else { return }

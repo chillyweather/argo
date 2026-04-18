@@ -9,6 +9,7 @@ enum WindowHelper {
 
     private static let pinnedCollectionBehavior: NSWindow.CollectionBehavior = [
         .canJoinAllSpaces,
+        .canJoinAllApplications,
         .fullScreenAuxiliary,
         .managed
     ]

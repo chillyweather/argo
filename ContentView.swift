@@ -11,7 +11,11 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             TopBar()
-            EditorView()
+            if appState.isPreviewingMarkdown {
+                MarkdownPreviewView()
+            } else {
+                EditorView()
+            }
         }
         .frame(minWidth: 400, minHeight: 300)
         .background(currentTheme.bg.opacity(appState.opacity))
