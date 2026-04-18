@@ -2,6 +2,12 @@ import AppKit
 
 enum WindowHelper {
     private static let floatingCollectionBehavior: NSWindow.CollectionBehavior = [
+        .canJoinAllApplications,
+        .fullScreenAuxiliary,
+        .managed
+    ]
+
+    private static let pinnedCollectionBehavior: NSWindow.CollectionBehavior = [
         .canJoinAllSpaces,
         .fullScreenAuxiliary,
         .managed
@@ -9,13 +15,14 @@ enum WindowHelper {
 
     static func setAlwaysOnTop(_ onTop: Bool, for window: NSWindow?) {
         guard let window else { return }
-        window.level = onTop ? .statusBar : .floating
-        window.collectionBehavior = floatingCollectionBehavior
+        window.level = onTop ? .screenSaver : .statusBar
+        window.collectionBehavior = onTop ? pinnedCollectionBehavior : floatingCollectionBehavior
+        bringToFront(window)
     }
 
     static func startFloating(_ window: NSWindow?) {
         guard let window else { return }
-        window.level = .floating
+        window.level = .statusBar
         window.collectionBehavior = floatingCollectionBehavior
     }
 
