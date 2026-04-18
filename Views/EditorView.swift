@@ -23,7 +23,7 @@ struct EditorView: View {
                 ))
             }
         }
-        .font(.system(size: 14, weight: .regular, design: .monospaced))
+        .font(AppFont.font(family: appState.fontFamily, size: appState.fontSize))
         .foregroundStyle(theme.text)
         .scrollContentBackground(.hidden)
         .padding(8)

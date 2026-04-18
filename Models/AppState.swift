@@ -22,6 +22,12 @@ final class AppState {
     var opacity: Double {
         didSet { persist() }
     }
+    var fontSize: Double {
+        didSet { persist() }
+    }
+    var fontFamily: String {
+        didSet { persist() }
+    }
     var theme: AppTheme {
         didSet { persist() }
     }
@@ -42,6 +48,8 @@ final class AppState {
         self.alwaysOnTop = defaults.object(forKey: "alwaysOnTop") as? Bool ?? false
         self.livePreviewEnabled = defaults.object(forKey: "livePreviewEnabled") as? Bool ?? true
         self.opacity = defaults.object(forKey: "opacity") as? Double ?? 1.0
+        self.fontSize = defaults.object(forKey: "fontSize") as? Double ?? 14
+        self.fontFamily = defaults.string(forKey: "fontFamily") ?? "System"
         self.theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "") ?? .system
         self.mode = AppMode(rawValue: defaults.string(forKey: "mode") ?? "") ?? .scratchpad
         self.draftContent = defaults.string(forKey: "draftContent") ?? ""
@@ -105,6 +113,8 @@ final class AppState {
         defaults.set(alwaysOnTop, forKey: "alwaysOnTop")
         defaults.set(livePreviewEnabled, forKey: "livePreviewEnabled")
         defaults.set(opacity, forKey: "opacity")
+        defaults.set(fontSize, forKey: "fontSize")
+        defaults.set(fontFamily, forKey: "fontFamily")
         defaults.set(theme.rawValue, forKey: "theme")
         defaults.set(mode.rawValue, forKey: "mode")
         defaults.set(draftContent, forKey: "draftContent")

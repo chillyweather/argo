@@ -16,7 +16,7 @@ struct ContentView: View {
         .frame(minWidth: 400, minHeight: 300)
         .background(currentTheme.bg.opacity(appState.opacity))
         .environment(\.theme, currentTheme)
-        .preferredColorScheme(appState.theme == .dark ? .dark : appState.theme == .light ? .light : nil)
+        .preferredColorScheme(appState.theme == .light ? .light : (appState.theme == .dark || appState.theme == .nord) ? .dark : nil)
         .onAppear {
             recoverDraftIfNeeded()
             if appState.mode == .todo {

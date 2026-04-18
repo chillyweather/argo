@@ -11,75 +11,102 @@ struct SettingsView: View {
     @State private var isTesting = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Settings")
-                .font(.headline)
-                .foregroundStyle(theme.text)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Settings")
+                    .font(.headline)
+                    .foregroundStyle(theme.text)
 
-            LabeledContent("SilverBullet URL") {
-                TextField("https://example.sb", text: $tempUrl)
-                    .textFieldStyle(.roundedBorder)
-            }
+                LabeledContent("SilverBullet URL") {
+                    TextField("https://example.sb", text: $tempUrl)
+                        .textFieldStyle(.roundedBorder)
+                }
 
-            LabeledContent("API Token") {
-                SecureField("Token", text: $tempToken)
-                    .textFieldStyle(.roundedBorder)
-            }
+                LabeledContent("API Token") {
+                    SecureField("Token", text: $tempToken)
+                        .textFieldStyle(.roundedBorder)
+                }
 
-            LabeledContent("Theme") {
-                Picker("", selection: Binding(
-                    get: { appState.theme },
-                    set: { appState.theme = $0 }
-                )) {
-                    ForEach(AppTheme.allCases, id: \.self) { theme in
-                        Text(theme.displayName).tag(theme)
+                LabeledContent("Theme") {
+                    Picker("", selection: Binding(
+                        get: { appState.theme },
+                        set: { appState.theme = $0 }
+                    )) {
+                        ForEach(AppTheme.allCases, id: \.self) { theme in
+                            Text(theme.displayName).tag(theme)
+                        }
                     }
                 }
-            }
 
-            LabeledContent("Live Preview") {
-                Toggle("", isOn: Binding(
-                    get: { appState.livePreviewEnabled },
-                    set: { appState.livePreviewEnabled = $0 }
-                ))
-            }
+                LabeledContent("Font") {
+                    Picker("", selection: Binding(
+                        get: { appState.fontFamily },
+                        set: { appState.fontFamily = $0 }
+                    )) {
+                        Text("System").tag("System")
+                        ForEach(AppFont.availableFamilies, id: \.self) { family in
+                            Text(family).tag(family)
+                        }
+                    }
+                }
 
-            LabeledContent("Opacity") {
+                LabeledContent("Font Size") {
+                    HStack {
+                        Slider(value: Binding(
+                            get: { appState.fontSize },
+                            set: { appState.fontSize = $0 }
+                        ), in: 8...32, step: 1)
+                        Text("\(Int(appState.fontSize))pt")
+                            .font(.caption)
+                            .foregroundStyle(theme.textMuted)
+                            .frame(width: 40, alignment: .trailing)
+                    }
+                }
+
+                LabeledContent("Opacity") {
+                    HStack {
+                        Slider(value: Binding(
+                            get: { appState.opacity },
+                            set: { appState.opacity = $0 }
+                        ), in: 0.1...1.0, step: 0.01)
+                        Text("\(Int(appState.opacity * 100))%")
+                            .font(.caption)
+                            .foregroundStyle(theme.textMuted)
+                            .frame(width: 40, alignment: .trailing)
+                    }
+                }
+
+                LabeledContent("Live Preview") {
+                    Toggle("", isOn: Binding(
+                        get: { appState.livePreviewEnabled },
+                        set: { appState.livePreviewEnabled = $0 }
+                    ))
+                }
+
                 HStack {
-                    Slider(value: Binding(
-                        get: { appState.opacity },
-                        set: { appState.opacity = $0 }
-                    ), in: 0.1...1.0, step: 0.01)
-                    Text("\(Int(appState.opacity * 100))%")
-                        .font(.caption)
-                        .foregroundStyle(theme.textMuted)
-                        .frame(width: 40, alignment: .trailing)
+                    Button("Test Connection") {
+                        Task { await testConnection() }
+                    }
+                    .disabled(isTesting)
+
+                    if let testResult {
+                        Text(testResult)
+                            .font(.caption)
+                            .foregroundStyle(testResult.contains("successful") ? theme.success : theme.error)
+                    }
+
+                    Spacer()
+
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .keyboardShortcut(.defaultAction)
                 }
             }
-
-            HStack {
-                Button("Test Connection") {
-                    Task { await testConnection() }
-                }
-                .disabled(isTesting)
-
-                if let testResult {
-                    Text(testResult)
-                        .font(.caption)
-                        .foregroundStyle(testResult.contains("successful") ? theme.success : theme.error)
-                }
-
-                Spacer()
-
-                Button("Done") {
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
+            .padding(20)
         }
         .foregroundStyle(theme.text)
-        .padding(20)
-        .frame(width: 400, height: 320)
+        .frame(width: 420, height: 400)
         .background(theme.bg)
         .onAppear {
             tempUrl = appState.sbUrl
